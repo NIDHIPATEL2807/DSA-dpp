@@ -1,0 +1,52 @@
+class Solution {
+public:
+    int findLengthOfShortestSubarray(vector<int>& arr) {
+
+        int n=arr.size();
+
+        //if array has only 1 element
+        if(n==1){
+            return 0;
+        }
+
+        int left=0;
+        int right=n-1;
+
+        //1.calculate possible subarray sorted from left
+        while(left+1<n  &&  arr[left]<=arr[left+1]){
+            left++;
+        }
+
+        //2.if enitire array is sorted
+        if(left==n-1){
+            return 0;
+        }
+
+        //3.now right side
+        while(right > 0  && arr[right]>=arr[right-1]){
+            right--;
+        }
+
+         // Step 3: Calculate the initial result
+        // Case 1: Remove everything after the left
+        // Case 2: Remove everything before the right
+        int result = min(n - left - 1, right);
+
+        int i=0;
+        int j=right;
+
+        while(i<=left && j<n){
+            if(arr[i]<=arr[j]){
+                  // If arr[i] can merge with arr[j], calculate the result
+                result=min(result,j-i-1);
+                i++;
+            }else{
+                j++;
+            }
+        }
+
+        return result;
+
+
+    }
+};
