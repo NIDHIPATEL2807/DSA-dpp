@@ -1,0 +1,65 @@
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> resultsArray(vector<int>& nums, int k) {
+        int n = nums.size();       // Total number of elements in the input array
+        vector<int> result;        // Vector to store the final results
+        int l = 0;                 // Left pointer of the sliding window
+        int count = 1;             // Counter to track the length of the current consecutive sequence
+
+        // **Edge Case Handling**
+        // If k is 1, every single element is a valid subarray of size 1.
+        if (k == 1) return nums;
+
+        // **Sliding Window Technique**
+        // We use a sliding window of size 'k' to traverse the array.
+        // 'right' is the right pointer that expands the window.
+        for (int right = 0; right < n; right++) {
+            // **Check for Consecutiveness**
+            // If the current element is exactly 1 greater than the previous element,
+            // it is part of a consecutive sequence.
+            if (right > 0 && nums[right - 1] + 1 == nums[right]) {
+                count++; // Increment the consecutive count
+                // *Question:* Why do we increment 'count' only when elements are consecutive?
+                // *Answer:* Because 'count' is meant to track the number of consecutive elements in the current window.
+            }
+
+            // **Maintain the Sliding Window Size**
+            // If the current window size exceeds 'k', we need to slide the window forward.
+            if (right - l + 1 > k) {
+                // **Check if the element exiting the window was part of a consecutive sequence**
+                if (nums[l] + 1 == nums[l + 1]) {
+                    count--; // Decrement the consecutive count as this element is no longer in the window
+                    // *Question:* Why do we decrement 'count' here?
+                    // *Answer:* Because the element at position 'l' was part of a consecutive sequence, and it's exiting the window.
+                }
+                l++; // Move the left pointer to shrink the window
+                // *Question:* What happens to 'l' when we increment it?
+                // *Answer:* The window slides forward by moving the left boundary to the right.
+            }
+
+            // **Check if Current Window is of Size 'k'**
+            if (right - l + 1 == k) {
+                // **Determine if the current window is a valid consecutive and sorted subarray**
+                // 'count' should be equal to 'k' if all elements in the window are consecutive
+                if (count == k) {
+                    // **If valid, the maximum element is the last element in the window (since the window is sorted)**
+                    result.push_back(nums[right]);
+                    // *Question:* Why is the maximum element at 'nums[right]'?
+                    // *Answer:* Because the subarray is sorted in ascending order, the last element is the largest.
+                } else {
+                    // **If not valid, append -1 to indicate the subarray does not meet the criteria**
+                    result.push_back(-1);
+                }
+                // *Question:* What does '-1' signify in the result array?
+                // *Answer:* It indicates that the corresponding subarray of size 'k' is not sorted and consecutive.
+            }
+        }
+
+        // **Return the Result Vector**
+        // This vector contains the maximum elements of valid subarrays or -1 for invalid ones.
+        return result;
+    }
+};
